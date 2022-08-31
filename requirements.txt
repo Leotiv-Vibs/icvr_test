@@ -6,3 +6,4 @@ setuptools~=57.0.0
 numpy=1.23.2
 opencv-python=4.6.0.66
 matplotlib=3.3.4
+tqdm=4.64.0

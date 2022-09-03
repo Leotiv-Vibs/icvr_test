@@ -1,5 +1,6 @@
 import re
 import os
+from typing import List
 
 import albumentations as A
 import cv2
@@ -22,7 +23,7 @@ class DataAugmentation:
         self.list_transforms = self.get_list_transforms()
 
     def create_augmentation(self):
-        for img in tqdm(self.img_data):
+        for img in tqdm(self.img_data, desc='Augmentation image'):
             image = cv2.imread(f'{self.path_data}\{img}')
             bbox = tools.bbox_yolo_format(f'{self.path_data}\{img[:-4]}.txt')
             for trans in self.list_transforms:
@@ -36,22 +37,11 @@ class DataAugmentation:
                 bboxes = transform['bboxes']
                 bboxes = tools.format_train_label(bboxes)
                 count_file = len(os.listdir(self.path_save_img))
-                # bbox_px = tools.bbox_px_format_list(bboxes, image_.shape[1], image_.shape[0])
-                # for obj in bbox_px:
-                #     start = (obj[1] - int(obj[3] // 2), obj[2] - int(obj[4] // 2))
-                #     stop = (obj[1] + int(obj[3] // 2), obj[2] + int(obj[4] // 2))
-                #     if obj[0] == 0:
-                #         color = (255, 0, 0)
-                #     elif obj[0] == 1:
-                #         color = (0, 255, 0)
-                #     elif obj[0] == 2:
-                #         color = (0, 0, 255)
-                #     image_ = cv2.rectangle(image_, start, stop, color=color, thickness=2)
                 cv2.imwrite(f'{self.path_save_img}\\aug_{count_file}.jpg', image_)
                 tools.write_train_label(f'{self.path_save_lbl}\\aug_{count_file}.txt', bboxes)
 
     @staticmethod
-    def get_list_transforms():
+    def get_list_transforms() -> List[A.Compose]:
         transform_hor_flip = A.Compose([
             A.HorizontalFlip(always_apply=True),
         ], bbox_params=A.BboxParams(format='yolo'))

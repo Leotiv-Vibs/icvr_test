@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+from typing import List, Tuple
 
 from tqdm import tqdm
 
@@ -9,11 +10,11 @@ import settings
 
 class PrepareDirectoryTrain:
     def __init__(self,
-                 path_data_img,
-                 path_data_lbl,
-                 path_create,
-                 number_class,
-                 labels_class,
+                 path_data_img: str,
+                 path_data_lbl: str,
+                 path_create: str,
+                 number_class: int,
+                 labels_class: list,
                  train_size: int = 0.7,
                  valid_size: int = 0.2,
                  test_size: int = 0.1,
@@ -41,7 +42,11 @@ class PrepareDirectoryTrain:
         self.prepare_dir_train(self.path_train, self.path_valid, self.path_test, train_img, valid_img, test_img)
         self.create_yaml_file(self.path_train, self.path_valid, self.number_class, self.labels_class)
 
-    def train_valid_test_split(self, path_data, train_size, valid_size, test_size):
+    def train_valid_test_split(self,
+                               path_data: str,
+                               train_size: float,
+                               valid_size: float,
+                               test_size: float) -> Tuple[List, List, List]:
         """
 
         :param path_data:
@@ -59,7 +64,13 @@ class PrepareDirectoryTrain:
 
         return train_img, valid_img, test_img
 
-    def prepare_dir_train(self, path_train, path_valid, path_test, train_img, valid_img, test_img):
+    def prepare_dir_train(self,
+                          path_train: str,
+                          path_valid: str,
+                          path_test: str,
+                          train_img: list,
+                          valid_img: list,
+                          test_img: list):
         """
 
         :param path_train:
@@ -70,21 +81,21 @@ class PrepareDirectoryTrain:
         :param test_img:
         :return:
         """
-        for tr in tqdm(train_img):
+        for tr in tqdm(train_img, desc='Prepare train dir for yolo'):
             shutil.copy2(f'{self.path_data_img}/{tr}', f'{path_train}/images/{tr}')
             shutil.copy2(f'{self.path_data_lbl}/{tr[:-4]}.txt', f'{path_train}/labels/{tr[:-4]}.txt')
 
-        for vl in tqdm(valid_img):
+        for vl in tqdm(valid_img, desc='Prepare valid dir for yolo'):
             shutil.copy2(f'{self.path_data_img}/{vl}', f'{path_valid}/images/{vl}')
             shutil.copy2(f'{self.path_data_lbl}/{vl[:-4]}.txt', f'{path_valid}/labels/{vl[:-4]}.txt')
 
-        for ts in tqdm(test_img):
+        for ts in tqdm(test_img, desc='Prepare test dir for yolo'):
             shutil.copy2(f'{self.path_data_img}/{ts}', f'{path_test}/images/{ts}')
             shutil.copy2(f'{self.path_data_lbl}/{ts[:-4]}.txt', f'{path_test}/labels/{ts[:-4]}.txt')
 
-    def create_yaml_file(self, path_train, path_valid, number_class, class_labels):
+    def create_yaml_file(self, path_train: str, path_valid: str, number_class: int, class_labels: list):
         train_dir = f'train: {path_train}/images'
-        valid_dir = f'valid: {path_valid}/images'
+        valid_dir = f'val: {path_valid}/images'
 
         nc = f'nc: {number_class}'
         labels = f'names: {class_labels}'
@@ -94,7 +105,7 @@ class PrepareDirectoryTrain:
             f.writelines(txt_file)
 
     @staticmethod
-    def create_yolo_dir(path_create):
+    def create_yolo_dir(path_create: str) -> None:
         """
         Creating directories for training
         :param path_create:

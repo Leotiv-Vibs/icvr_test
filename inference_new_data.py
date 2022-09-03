@@ -125,9 +125,9 @@ def detect_simple_image(path_image,
 
 
 def run():
-    path_image = r'/aug_data_img/aug_11251.jpg'
-    path_save = 'yolov7/pred.jpg'
-    weights = r'C:\Users\79614\PycharmProjects\icvr_test\best.pt'
+    path_image = 'PATH_TO_YOUR_IMAGE'
+    path_save = 'PATH_TO_SAVE_IMAGE'
+    weights = 'PATH_TO_WEIGHTS'
     detect_simple_image(path_image, path_save, weights)
 
 

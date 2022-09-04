@@ -9,6 +9,9 @@ import settings
 
 
 class PrepareDirectoryTrain:
+    """
+    A class for preparing data for yolo model training
+    """
     def __init__(self,
                  path_data_img: str,
                  path_data_lbl: str,
@@ -48,12 +51,12 @@ class PrepareDirectoryTrain:
                                valid_size: float,
                                test_size: float) -> Tuple[List, List, List]:
         """
-
-        :param path_data:
-        :param train_size:
-        :param valid_size:
-        :param test_size:
-        :return:
+        Separation into training validation and test
+        :param path_data: the path to the data for the split
+        :param train_size: size for train
+        :param valid_size: size for valid
+        :param test_size: size for test
+        :return: a tuple of lists for training validation and test
         """
         name_files = os.listdir(path_data)
         img_data = sorted(list(filter(re.compile(f".*{self.file_extension}").match, name_files)))
@@ -72,13 +75,13 @@ class PrepareDirectoryTrain:
                           valid_img: list,
                           test_img: list):
         """
-
-        :param path_train:
-        :param path_valid:
-        :param path_test:
-        :param train_img:
-        :param valid_img:
-        :param test_img:
+        Prepare and divide data for training into the correct directories
+        :param path_train: the path to the training directory
+        :param path_valid: the path to the valid directory
+        :param path_test: the path to the test directory
+        :param train_img: a list of images for train
+        :param valid_img: a list of images for valid
+        :param test_img: a list of images for test
         :return:
         """
         for tr in tqdm(train_img, desc='Prepare train dir for yolo'):
@@ -94,6 +97,14 @@ class PrepareDirectoryTrain:
             shutil.copy2(f'{self.path_data_lbl}/{ts[:-4]}.txt', f'{path_test}/labels/{ts[:-4]}.txt')
 
     def create_yaml_file(self, path_train: str, path_valid: str, number_class: int, class_labels: list):
+        """
+        Create a yaml file to run training
+        :param path_train: directory path train
+        :param path_valid: directory path valid
+        :param number_class: number of classes to detect
+        :param class_labels: list of classes to train the model
+        :return:
+        """
         train_dir = f'train: {path_train}/images'
         valid_dir = f'val: {path_valid}/images'
 
@@ -108,7 +119,7 @@ class PrepareDirectoryTrain:
     def create_yolo_dir(path_create: str) -> None:
         """
         Creating directories for training
-        :param path_create:
+        :param path_create: path to save directories for yolo
         :return:
         """
         os.makedirs(f'{path_create}/train/images', exist_ok=True)

@@ -11,6 +11,9 @@ import settings
 
 
 class DataAugmentation:
+    """
+    Class for data augmentation
+    """
     def __init__(self, path_data, path_save_img, path_save_lbl):
         self.path_data = path_data
         self.path_save_img = path_save_img
@@ -23,6 +26,10 @@ class DataAugmentation:
         self.list_transforms = self.get_list_transforms()
 
     def create_augmentation(self):
+        """
+        perform augmentation for each image in the dataset and save the new image and new label
+        :return:
+        """
         for img in tqdm(self.img_data, desc='Augmentation image'):
             image = cv2.imread(f'{self.path_data}\{img}')
             bbox = tools.bbox_yolo_format(f'{self.path_data}\{img[:-4]}.txt')
@@ -42,6 +49,10 @@ class DataAugmentation:
 
     @staticmethod
     def get_list_transforms() -> List[A.Compose]:
+        """
+        create a list of objects to augment images
+        :return:
+        """
         transform_hor_flip = A.Compose([
             A.HorizontalFlip(always_apply=True),
         ], bbox_params=A.BboxParams(format='yolo'))
